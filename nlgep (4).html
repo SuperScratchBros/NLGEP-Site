@@ -19009,7 +19009,7 @@ _VIEWER_DL_JS +
             // Restart the libcurl wasm engine after a fault (e.g. "table index is out of bounds"),
             // which otherwise leaves every later request failing until the page is reloaded.
             let _wasmRecovering = null;
-            const WASM_FAULT_RE = /table index is out of bounds|null function or function signature mismatch|memory access out of bounds|unreachable|Aborted\(|indirect call/i;
+            const WASM_FAULT_RE = /table index is out of bounds|null function(?: or function signature mismatch)?|memory access out of bounds|unreachable|Aborted\(|indirect call/i;
             function nlRecoverWasm() {
                 if (_wasmRecovering) return _wasmRecovering;
                 _wasmRecovering = (async () => {
