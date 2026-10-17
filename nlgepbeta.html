@@ -29,7 +29,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-    <link rel="prerender" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/iso-639-1@2.1.11/build/index.js" defer
@@ -4275,6 +4274,42 @@
             pointer-events: none;
             z-index: 1;
         }
+    
+        /* Live loading activity glass card */
+        .loading-activity-card {
+            width: min(390px, calc(100vw - 40px));
+            box-sizing: border-box;
+            margin-top: 2px;
+            padding: 15px 18px;
+            border-radius: 16px;
+            color: rgba(255,255,255,.94);
+            background: linear-gradient(135deg, rgba(34,197,94,.30), rgba(5,150,105,.18));
+            border: 1px solid rgba(134,239,172,.42);
+            box-shadow: 0 14px 42px rgba(0,0,0,.24), 0 0 22px rgba(34,197,94,.10), inset 0 1px 0 rgba(220,252,231,.18);
+            backdrop-filter: blur(18px) saturate(145%);
+            -webkit-backdrop-filter: blur(18px) saturate(145%);
+            display: flex; align-items: center; gap: 12px;
+            text-align: left;
+            perspective: 700px;
+        }
+        .loading-activity-icon {
+            width: 36px; height: 36px; flex: 0 0 36px;
+            display: grid; place-items: center; border-radius: 11px;
+            color: #dcfce7; background: rgba(34,197,94,.22);
+            border: 1px solid rgba(134,239,172,.32); font-size: 16px;
+        }
+        .loading-activity-copy { min-width: 0; flex: 1; }
+        .loading-activity-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: rgba(220,252,231,.82); margin-bottom: 4px; }
+        .loading-activity-stage { font-size: 13px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+        .loading-activity-sub { font-size: 11px; color: rgba(220,252,231,.78); margin-top: 3px; }
+        .loading-activity-card.flip-out { animation: loadingFlipOut .22s ease-in both; }
+        .loading-activity-card.flip-in { animation: loadingFlipIn .38s cubic-bezier(.2,.75,.25,1) both; }
+        @keyframes loadingFlipOut { to { opacity: 0; transform: rotateX(75deg) translateY(-8px); } }
+        @keyframes loadingFlipIn { from { opacity: 0; transform: rotateX(-75deg) translateY(10px); } to { opacity: 1; transform: rotateX(0) translateY(0); } }
+        @media (prefers-reduced-motion: reduce) {
+            .loading-activity-card.flip-out, .loading-activity-card.flip-in { animation: none; }
+        }
+
     </style>
     <style id="skinStyles">
         /* ═══════════════ Browser skins (mask NLGEP as another browser) ═══════════════ */
@@ -5824,12 +5859,6 @@ body[data-nl="settings"] .titlebar .nl-brand{flex:1}
 .nl-orb.o1{width:340px;height:340px;background:#1f7a4d;left:12%;top:8%}
 .nl-orb.o2{width:300px;height:300px;background:#2fa36b;right:10%;bottom:6%}
 .nl-orb.o3{width:220px;height:220px;background:#0f5c3a;left:46%;top:56%}
-#nlgepMainAnimation{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;background:rgba(3,14,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s ease}
-#nlgepMainAnimation.active{opacity:1;visibility:visible}
-.nlgep-anim-logo{font-size:clamp(48px,10vw,110px);font-weight:800;letter-spacing:.18em;color:var(--tx);text-shadow:0 0 12px rgba(207,232,216,.55),0 0 38px rgba(31,122,77,.65);transform:scale(.72) rotateX(-20deg);opacity:0}
-#nlgepMainAnimation.active .nlgep-anim-logo{animation:nlgep-main-intro 1.05s cubic-bezier(.2,.85,.25,1) forwards}
-@keyframes nlgep-main-intro{0%{opacity:0;transform:scale(.72) rotateX(-20deg);filter:blur(8px)}45%{opacity:1;transform:scale(1.08) rotateX(0);filter:blur(0)}72%{transform:scale(.98)}100%{opacity:0;transform:scale(1)}}
-@media(prefers-reduced-motion:reduce){#nlgepMainAnimation.active .nlgep-anim-logo{animation:none;opacity:0;transform:none}}
 #nlHomeBody{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;text-align:center}
 #nlHomeClockCard{position:absolute;top:18px;right:18px;z-index:2;display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:18px;text-align:left}
 #nlHomeClockCard i{font-size:20px;color:var(--ac)}
@@ -5850,7 +5879,28 @@ body[data-nl="settings"] .titlebar .nl-brand{flex:1}
   #nlHomeClockCard{top:10px;right:10px;padding:8px 12px}
 }
 /* AI page: only the site, no browser controls */
-body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .bookmarks-bar-wrap{display:none!important}
+
+</style>
+<style id="nlgep-anime-css">
+.nl-an-item{cursor:pointer;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);overflow:hidden;transition:background .15s,transform .15s}
+.nl-an-item:hover,.nl-an-item:focus-visible{background:rgba(255,255,255,.13);transform:translateY(-2px);outline:0}
+.nl-an-poster{aspect-ratio:2/3;background:rgba(0,0,0,.35)}
+.nl-an-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.nl-an-meta{padding:8px 10px;display:flex;flex-direction:column;gap:3px}
+.nl-an-meta b{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nl-an-meta span{font-size:12px;color:var(--tx2)}
+#nlPage-anime .nl-yt-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.nl-an-detail{display:flex;gap:18px;flex-wrap:wrap;max-width:980px;margin:0 auto 22px;padding:16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.nl-an-detail img{width:200px;max-width:100%;border-radius:12px}
+.nl-an-info{flex:1;min-width:240px;display:flex;flex-direction:column;gap:8px}
+.nl-an-info h2{font-size:22px}
+.nl-an-chips{display:flex;gap:6px;flex-wrap:wrap}
+.nl-an-chips span{font-size:11px;padding:2px 8px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08)}
+.nl-an-links{display:flex;gap:8px;flex-wrap:wrap}
+.nl-an-links a{padding:7px 12px;border-radius:10px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:var(--tx);font-size:13px;text-decoration:none}
+.nl-an-links a:hover{background:rgba(255,255,255,.2)}
+</style>
+<style id="nlgep-ai-hide">body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .bookmarks-bar-wrap{display:none!important}
 </style>
 <style id="nlgep-yt-css">
 .nl-yt-search{flex:1;display:flex;max-width:560px;margin:0 auto;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.08);overflow:hidden}
@@ -6053,6 +6103,7 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
     <button class="nl-nav" data-nl="home"><i class="fas fa-house"></i><span>Home</span></button>
     <button class="nl-nav" data-nl="browser"><i class="fas fa-earth-americas"></i><span>Browser</span></button>
     <button class="nl-nav" data-nl="games"><i class="fas fa-gamepad"></i><span>Games</span></button>
+    <button class="nl-nav" data-nl="anime"><i class="fas fa-dragon"></i><span>Anime</span></button>
     <button class="nl-nav" data-nl="entertainment"><i class="fas fa-film"></i><span>Entertainment</span></button>
     <button class="nl-nav" data-nl="ai"><i class="fas fa-robot"></i><span>AI</span></button>
     <button class="nl-nav" data-nl="chat"><i class="fas fa-comments"></i><span>Chat</span></button>
@@ -6065,9 +6116,8 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
     <div class="titlebar"><div class="nl-brand"><i class="fas fa-earth-americas"></i>NLGEP<span class="nl-beta">BETA</span></div></div>
     <div class="nl-body"><div class="nl-card" id="nlHomeBody">
         <span class="nl-orb o1"></span><span class="nl-orb o2"></span><span class="nl-orb o3"></span>
-        <div id="nlgepMainAnimation" aria-hidden="true"><div class="nlgep-anim-logo">NLGEP</div></div>
         <div class="nl-glass" id="nlHomeClockCard"><i id="nlHomeIcon" class="fas fa-moon"></i><div><div id="nlHomeClock">--:--</div><div id="nlHomeDate">-</div></div></div>
-        <div class="nl-glass" id="nlHomeTitleCard"><i class="fas fa-earth-americas"></i><span>NLGEP Network</span><span class="nl-beta">BETA</span></div>
+        <div class="nl-glass" id="nlHomeTitleCard"><i class="fas fa-earth-americas gust-icon-anim"></i><span class="nl-home-brand-letters" style="letter-spacing:3px;display:inline-flex;"><span class="gust-letter-N">N</span><span class="gust-letter-L">L</span><span class="gust-letter-G">G</span><span class="gust-letter-E">E</span><span class="gust-letter-P">P</span></span><span class="nl-home-network"> Network</span><span class="nl-beta gust-badge-anim">BETA</span></div>
         <div class="nl-flip" id="nlFlip" title="Click to flip">
             <div class="nl-flip-inner">
                 <div class="nl-face nl-front">Next Learning Generation Education Program</div>
@@ -6079,7 +6129,19 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
 </section>
 
 <section class="nl-page" id="nlPage-games">
-    <div class="titlebar"><div class="nl-brand"><i class="fas fa-gamepad"></i>NLGEP Games</div></div>
+    <div class="titlebar">
+        <div class="nl-brand"><i class="fas fa-gamepad"></i>NLGEP Games</div>
+        <div class="nav-pill-group" role="group" aria-label="Games navigation">
+            <button class="nav-btn nav-pill-btn" id="nlGmHome" title="Home"><i class="fas fa-house"></i></button>
+            <button class="nav-btn nav-pill-btn" id="nlGmReload" title="Reload games"><i class="fas fa-rotate-right"></i></button>
+            <button class="nav-btn nav-pill-btn" id="nlGmRandom" title="Random game"><i class="fas fa-dice"></i></button>
+        </div>
+        <form id="nlGmForm" class="nl-yt-search" autocomplete="off" role="search">
+            <input id="nlGmQ" type="text" placeholder="Search games" spellcheck="false" aria-label="Search games">
+            <button type="button" id="nlGmClear" title="Clear" style="display:none"><i class="fas fa-xmark"></i></button>
+            <button type="submit" title="Search"><i class="fas fa-magnifying-glass"></i></button>
+        </form>
+    </div>
     <div class="nl-body"><div class="nl-card"><iframe id="nlGamesFrame" title="NLGEP Games" allow="fullscreen; autoplay; gamepad; clipboard-write"></iframe></div></div>
 </section>
 
@@ -6096,6 +6158,25 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
 <section class="nl-page" id="nlPage-staff">
     <div class="titlebar"><div class="nl-brand"><i class="fas fa-user-shield"></i>NLGEP Staff Mode</div></div>
     <div class="nl-body"><div class="nl-card"></div></div>
+</section>
+
+<section class="nl-page" id="nlPage-anime">
+    <div class="titlebar">
+        <div class="nl-brand"><i class="fas fa-dragon"></i>NLGEP Anime</div>
+        <form id="nlAnForm" class="nl-yt-search" autocomplete="off">
+            <input id="nlAnQ" type="text" placeholder="Search anime (title, e.g. Frieren)" spellcheck="false" aria-label="Search anime">
+            <button type="submit" title="Search"><i class="fas fa-magnifying-glass"></i></button>
+        </form>
+        <select id="nlAnGenre" class="tool-btn" aria-label="Filter by type" style="padding:0 8px">
+            <option value="">All types</option><option value="tv">TV</option><option value="movie">Movie</option><option value="ova">OVA</option><option value="special">Special</option>
+        </select>
+    </div>
+    <div class="nl-body"><div class="nl-card nl-yt-card">
+        <div id="nlAnDetail" style="display:none"></div>
+        <div id="nlAnStatus" class="nl-yt-status">Search for a title, or browse what is airing now.</div>
+        <div id="nlAnGrid" class="nl-yt-grid"></div>
+        <div style="text-align:center;padding:12px"><button id="nlAnMore" class="tool-btn" style="display:none;padding:8px 16px">Load more</button></div>
+    </div></div>
 </section>
 
 <section class="nl-page" id="nlPage-youtube">
@@ -6285,23 +6366,7 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
                             <span style="letter-spacing: 3px; display:inline-flex;">
                                 <span class="gust-letter-N">N</span><span class="gust-letter-L">L</span><span class="gust-letter-G">G</span><span class="gust-letter-E">E</span><span class="gust-letter-P">P</span>
                             </span>
-                            <span class="gust-badge-anim" style="
-                                font-size: 11px;
-                                font-weight: 700;
-                                letter-spacing: 0.05em;
-                                color: var(--ac);
-                                background: rgba(207, 232, 216,0.10);
-                                border: 1px solid rgba(207, 232, 216,0.35);
-                                border-radius: 6px;
-                                padding: 2px 7px;
-                                margin-left: 10px;
-                                vertical-align: middle;
-                                line-height: 1.4;
-                                font-family: var(--mono);
-                                position: relative;
-                                top: -16px;
-                                margin-left: -3px;
-                            ">BETA</span>
+                            <span class="nl-nt-browser" style="font-size:.5em;font-weight:600;letter-spacing:2px;margin-left:14px;align-self:center;color:var(--tx)">Browser</span>
                         </div>
                         <div class="nt-search">
                             <div class="nt-search-engine" id="ntEngine">
@@ -7950,6 +8015,14 @@ body[data-nl="ai"] .titlebar,body[data-nl="ai"] .navbar,body[data-nl="ai"] .book
                 <div class="overlay splash" id="overlay">
                     <div class="spinner"></div>
                     <div id="overlayText">Initializing...</div>
+                    <div class="loading-activity-card" id="loadingActivityCard" aria-live="polite" aria-atomic="true">
+                        <div class="loading-activity-icon" id="loadingActivityIcon">↻</div>
+                        <div class="loading-activity-copy">
+                            <div class="loading-activity-label">Browser activity</div>
+                            <div class="loading-activity-stage" id="loadingActivityStage">Preparing browser request</div>
+                            <div class="loading-activity-sub" id="loadingActivitySub">Waiting for navigation logs…</div>
+                        </div>
+                    </div>
                 </div>
                 <div id="elemHighlightOverlay" style="
                     display:none;
@@ -11842,6 +11915,7 @@ window._libcurlReady = true;
             // Result of an in-frame find (count + current index), reported by the
             // gust:find engine injected into the proxied page.
             window.addEventListener('message', (e) => {
+                if (!(function(ev){ var f=document.getElementById('frame'); if(ev.source===window) return true; try{ for(var s=ev.source; s && s!==window; s=(s.parent===s?null:s.parent)){ if(f && s===f.contentWindow) return true; } }catch(_){} return false; })(e)) return;
                 if (e.data && e.data.type === 'gust:openFind') {
                     if (isFindAvailable()) openFindBar();
                     return;
@@ -13009,6 +13083,24 @@ window._libcurlReady = true;
                 }, 400);
             }
             function getPageLS(origin) { return pageLS[origin] || {}; }
+
+            // NLGEP hardening: origins in cookieSet/ls* messages come from untrusted proxied
+            // pages. Accept only well-formed http(s) origins that match the current page's
+            // site, and refuse keys that would pollute Object.prototype.
+            const _NL_BAD_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+            function _nlSite(h) { const p = String(h).split('.'); return p.slice(-2).join('.'); }
+            function _nlOriginOk(o) {
+                try {
+                    if (typeof o !== 'string') return false;
+                    const u = new URL(o);
+                    if (u.origin !== o || (u.protocol !== 'https:' && u.protocol !== 'http:')) return false;
+                    if (_NL_BAD_KEYS.has(o)) return false;
+                    if (localStorage.getItem('nlgep:strictOrigin') === 'false') return true;
+                    if (!pageUrl) return false;
+                    const pu = new URL(pageUrl);
+                    return u.origin === pu.origin || _nlSite(u.hostname) === _nlSite(pu.hostname);
+                } catch (e) { return false; }
+            }
             function setPageLSItem(origin, k, v) { (pageLS[origin] = pageLS[origin] || {})[String(k)] = String(v); savePageLS(); }
             function removePageLSItem(origin, k) { if (pageLS[origin]) { delete pageLS[origin][String(k)]; savePageLS(); } }
             function clearPageLS(origin) { if (pageLS[origin]) { delete pageLS[origin]; savePageLS(); } }
@@ -14427,6 +14519,7 @@ window._libcurlReady = true;
             }
 
             window.addEventListener('message', (e) => {
+                if (!(function(ev){ var f=document.getElementById('frame'); if(ev.source===window) return true; try{ for(var s=ev.source; s && s!==window; s=(s.parent===s?null:s.parent)){ if(f && s===f.contentWindow) return true; } }catch(_){} return false; })(e)) return;
                 if (e.data?.type === 'gust:stylesResult') {
                     if (currentDetailTab !== 'styles') return;
                     const content = $('elemDetailContent');
@@ -14702,6 +14795,45 @@ window._libcurlReady = true;
                 });
             }, 0);
 
+            let _loadingActivityLast = '';
+            let _loadingActivityTransition = 0;
+            function updateLoadingActivity(message, type = '') {
+                const card = document.getElementById('loadingActivityCard');
+                const stageEl = document.getElementById('loadingActivityStage');
+                const subEl = document.getElementById('loadingActivitySub');
+                const iconEl = document.getElementById('loadingActivityIcon');
+                if (!card || !stageEl || !subEl || overlay.classList.contains('hidden') || overlay.classList.contains('error')) return;
+                const text = String(message || '').replace(/\s+/g, ' ').trim();
+                const rules = [
+                    [/switch(?:ing|ed)? .*wisp|wisp .*switch|rotat(?:ing|ed) .*server|server .*rotat/i, ['Switching WISP Server', 'Selecting the next available proxy server', '⇄']],
+                    [/connect(?:ing|ed)? .*wisp|wisp .*connect|via wss?:\/\/|server connection/i, ['Connecting to WISP Server', 'Establishing a route to the remote server', '↗']],
+                    [/\bhtml\b|text\/html|document response|loading document/i, ['Loading HTML', 'Receiving and parsing the page document', '⌘']],
+                    [/\bcss\b|stylesheet|\.css(?:\?| |$)/i, ['Loading CSS', 'Fetching page styles and layout rules', '◈']],
+                    [/\bjavascript\b|\bjs\b|script resource|\.js(?:\?| |$)/i, ['Loading JS', 'Fetching and preparing page scripts', '⟨⟩']],
+                    [/fetch(?:ing)? .*api|\/api\/|api request|xhr|xmlhttprequest/i, ['Fetching APIs', 'Waiting for page data and API responses', '⇅']],
+                    [/redirect|redirected/i, ['Following redirect', 'Updating the destination address', '↗']],
+                    [/request|queuefetch|fetch-entry|reqdiag/i, ['Fetching resources', 'Loading content requested by the page', '⇅']],
+                    [/page ready|navigation complete|loaded successfully/i, ['Finishing up', 'The page is becoming ready', '✓']],
+                    [/error|failed|timeout/i, ['Handling a request issue', 'Checking the next available response', '!']]
+                ];
+                let result = null;
+                for (const rule of rules) { if (rule[0].test(text)) { result = rule[1]; break; } }
+                if (!result || result[0] === _loadingActivityLast) return;
+                _loadingActivityLast = result[0];
+                const transitionId = ++_loadingActivityTransition;
+                card.classList.remove('flip-in');
+                card.classList.add('flip-out');
+                setTimeout(() => {
+                    if (transitionId !== _loadingActivityTransition || !card.isConnected) return;
+                    stageEl.textContent = result[0];
+                    subEl.textContent = result[1];
+                    iconEl.textContent = result[2];
+                    card.classList.remove('flip-out');
+                    void card.offsetWidth;
+                    card.classList.add('flip-in');
+                }, 220);
+            }
+
             function log(msg, type = "") {
                 const d = document.createElement("div");
                 d.className = `log-entry ${type}`.trim();
@@ -14714,6 +14846,7 @@ window._libcurlReady = true;
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = msg;
                 const plainText = tempDiv.textContent || msg;
+                updateLoadingActivity(plainText, type);
                 d.dataset.text = plainText.toLowerCase();
 
                 const msgKey = msg.slice(0, 500);
@@ -15354,6 +15487,18 @@ window._libcurlReady = true;
 
             async function doFetch(url, opts = {}) {
                 if (_netStall) return Promise.reject(new TypeError('Failed to fetch'));
+                // Validate/normalize before libcurl/WISP sees the request.  A malformed
+                // telemetry URL should fail locally instead of taking the WISP connection
+                // down with libcurl's "bad/illegal format" error.
+                try {
+                    const parsed = new URL(String(url));
+                    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+                        return Promise.reject(new TypeError(`Unsupported URL protocol: ${parsed.protocol}`));
+                    }
+                    url = parsed.href;
+                } catch (e) {
+                    return Promise.reject(new TypeError(`Invalid proxy URL: ${String(url).slice(0,180)}`));
+                }
                 const method = opts.method || "GET";
                 const headers = {
                     ...(opts.headers || {})
@@ -17220,9 +17365,14 @@ try {
 window.__gustSafe = function (o) {
   if (o == null) return o;
   try { void o.__gustLoc$; return o; } catch (e) {}
+  // Cross-origin WindowProxy objects may expose location, but reading nested
+  // properties such as window.top.location.hostname is still forbidden.  Do
+  // not return the foreign Location object; use NLGEP's proxied location facade
+  // instead.  This prevents a site's React error boundary from being triggered
+  // by our own location instrumentation (DuckDuckGo exposed this path).
   return {
-    get __gustLoc$() { try { return o.location; } catch (e) { return undefined; } },
-    set __gustLoc$(v) { try { o.location = v; } catch (e) {} }
+    get __gustLoc$() { try { return locProxy; } catch (e) { return undefined; } },
+    set __gustLoc$(v) { try { locProxy.href = String(v); } catch (e) {} }
   };
 };
 // Fix 3a: Override document.location — this IS configurable on all major browsers.
@@ -17704,8 +17854,28 @@ HTMLFormElement.prototype.submit = function() {
 
 const origPush = history.pushState;
 const origReplace = history.replaceState;
-history.pushState = function(s, t, u) { if (u) { try { Object.assign(fakeLoc, new URL(resolve(u))); } catch {} parent.postMessage({ t: 'uc', u: fakeLoc.href }, '*'); } return origPush.call(this, s, t, null); };
-history.replaceState = function(s, t, u) { if (u) { try { Object.assign(fakeLoc, new URL(resolve(u))); } catch {} parent.postMessage({ t: 'uc', u: fakeLoc.href }, '*'); } return origReplace.call(this, s, t, null); };
+// URL properties live on URL.prototype and are not enumerable, so
+// Object.assign(fakeLoc, new URL(...)) silently leaves fakeLoc unchanged.
+// SPAs that read location after pushState/replaceState then keep seeing the old
+// route and can render the wrong page or fail route matching. Assigning href
+// updates the URL object's parsed fields together (pathname/search/hash/etc.).
+function syncFakeLocation(nextUrl) {
+  try {
+    const next = new URL(resolve(String(nextUrl)));
+    if (next.protocol !== 'http:' && next.protocol !== 'https:') return false;
+    fakeLoc.href = next.href;
+    parent.postMessage({ t: 'uc', u: fakeLoc.href }, '*');
+    return true;
+  } catch (e) { return false; }
+}
+history.pushState = function(s, t, u) {
+  if (u != null && u !== '') syncFakeLocation(u);
+  return origPush.call(this, s, t, null);
+};
+history.replaceState = function(s, t, u) {
+  if (u != null && u !== '') syncFakeLocation(u);
+  return origReplace.call(this, s, t, null);
+};
 
 const OrigWorker = window.Worker;
 if (OrigWorker) { window.Worker = function(url, opts) { const absUrl = resolve(url); const w = { onmessage: null, onerror: null, postMessage: () => {}, terminate: () => {}, addEventListener: () => {}, removeEventListener: () => {} }; const p = /^(data:|blob:)/i.test(absUrl) ? _fetch.call(window, absUrl).then(r => r.arrayBuffer()).then(buf => { const arr = new Uint8Array(buf); return { d: Base64.encode(arr) }; }) : req(absUrl); p.then(r => { const arr = Base64.decode(r.d || ''); const blob = new Blob([arr], { type: 'application/javascript' }); const real = new OrigWorker(URL.createObjectURL(blob), opts); w.postMessage = m => real.postMessage(m); w.terminate = () => real.terminate(); w.addEventListener = (t, fn) => real.addEventListener(t, fn); w.removeEventListener = (t, fn) => real.removeEventListener(t, fn); real.onmessage = e => w.onmessage?.(e); real.onerror = e => w.onerror?.(e); }).catch(e => w.onerror?.(new ErrorEvent('error', { message: e.message }))); return w; }; }
@@ -18416,15 +18586,15 @@ parent.postMessage({ t: 'ready' }, '*');
                 }
                 if (d.t === "cookieSet") {
                     const origin = d.origin || (pageUrl ? new URL(pageUrl).origin : "");
-                    if (origin && d.cookie) {
+                    if (origin && d.cookie && typeof d.cookie === "string" && d.cookie.length < 8192 && _nlOriginOk(origin)) {
                         updateCookie(origin, d.cookie);
                         syncCookiesToFrame(origin);
                     }
                     return;
                 }
-                if (d.t === "lsSet") { if (d.origin) setPageLSItem(d.origin, d.k, d.v); return; }
-                if (d.t === "lsRemove") { if (d.origin) removePageLSItem(d.origin, d.k); return; }
-                if (d.t === "lsClear") { if (d.origin) clearPageLS(d.origin); return; }
+                if (d.t === "lsSet") { if (_nlOriginOk(d.origin) && !_NL_BAD_KEYS.has(String(d.k))) setPageLSItem(d.origin, d.k, d.v); return; }
+                if (d.t === "lsRemove") { if (_nlOriginOk(d.origin)) removePageLSItem(d.origin, d.k); return; }
+                if (d.t === "lsClear") { if (_nlOriginOk(d.origin)) clearPageLS(d.origin); return; }
                 if (d.t === 'extinstall') {
                     // In-page "Add to NLGEP" button on Chrome Web Store detail pages.
                     try { if (typeof GustExt !== 'undefined' && GustExt._installUI) GustExt._installUI(d.u || pageUrl, _replyTo); } catch (e) {}
@@ -19413,6 +19583,16 @@ _VIEWER_DL_JS +
                         setTabTitle("Loading...");
                     }
                     if (typeof updatePauseSiteBtn === 'function') updatePauseSiteBtn();
+                    _loadingActivityLast = '';
+                    _loadingActivityTransition++;
+                    const activityCard = document.getElementById('loadingActivityCard');
+                    if (activityCard) activityCard.classList.remove('flip-in', 'flip-out');
+                    const activityStage = document.getElementById('loadingActivityStage');
+                    const activitySub = document.getElementById('loadingActivitySub');
+                    const activityIcon = document.getElementById('loadingActivityIcon');
+                    if (activityStage) activityStage.textContent = 'Connecting to WISP Server';
+                    if (activitySub) activitySub.textContent = 'Preparing the page request…';
+                    if (activityIcon) activityIcon.textContent = '↗';
                     showOverlay("Loading...");
                     totalRequests = 0;
                     pendingRequests = 0;
@@ -20123,22 +20303,41 @@ _VIEWER_DL_JS +
                         return out;
                     }
                     async function proxyEsmModule(absUrl) {
+                        // Modern interception proxies keep module requests inside the proxy
+                        // rather than falling back to a direct browser request.  A direct
+                        // fallback is especially fragile here because the page runs in an
+                        // opaque/blob iframe origin (Miruro/SvelteKit/Vite were hitting this).
                         if (_esmBlobCache.has(absUrl)) { const v = _esmBlobCache.get(absUrl); return v === null ? absUrl : v; }
                         if (_esmInflight.has(absUrl)) return _esmInflight.get(absUrl);
-                        if (_esmBlobCache.size >= _esmMax) { log(`<i class="fas fa-triangle-exclamation" style="color:var(--warn)"></i> module graph exceeded ${_esmMax} — remaining chunks load direct`, "warn"); return absUrl; }
+                        if (_esmBlobCache.size >= _esmMax) {
+                            throw new Error(`module graph exceeded ${_esmMax}`);
+                        }
                         const promise = (async () => {
-                            _esmBlobCache.set(absUrl, null);   // in-progress → cycle back-edges resolve to real URL
+                            _esmBlobCache.set(absUrl, null);   // in-progress → cycle back-edges resolve through the final import map
                             let src;
+                            let lastErr;
                             try {
-                                const r = await Promise.race([
-                                    queueFetch(absUrl, { signal: tabCtrl.signal }, PRIORITY.js),
-                                    new Promise((_, rj) => setTimeout(() => rj(new Error('module fetch timeout')), 12000))
-                                ]);
-                                if (!r.buf || !r.buf.byteLength) throw new Error('empty');
-                                src = new TextDecoder('utf-8').decode(new Uint8Array(r.buf));
+                                for (let attempt = 1; attempt <= 3; attempt++) {
+                                    try {
+                                        const r = await Promise.race([
+                                            queueFetch(absUrl, { signal: tabCtrl.signal }, PRIORITY.js),
+                                            new Promise((_, rj) => setTimeout(() => rj(new Error('module fetch timeout')), 30000))
+                                        ]);
+                                        if (!r.buf || !r.buf.byteLength) throw new Error('empty module response');
+                                        src = new TextDecoder('utf-8').decode(new Uint8Array(r.buf));
+                                        if (src.trim()) break;
+                                    } catch (e) {
+                                        lastErr = e;
+                                        if (attempt < 3) await new Promise(r => setTimeout(r, 350 * attempt));
+                                    }
+                                }
+                                if (!src || !src.trim()) throw (lastErr || new Error('empty module response'));
                             } catch (e) {
-                                _esmBlobCache.delete(absUrl);   // fetch failed → let the browser try the real URL
-                                return absUrl;
+                                _esmBlobCache.delete(absUrl);
+                                log(`<i class="fas fa-triangle-exclamation" style="color:var(--warn)"></i> proxied module failed: ${String(e && e.message || e).replace(/[<>]/g,'')} — ${absUrl.replace(/^https?:\/\//,'').slice(0,90)}`, "warn");
+                                // IMPORTANT: do not return absUrl. That would create an
+                                // unproxied module request from the opaque iframe.
+                                throw e;
                             }
                             const out = await transformModuleSource(src, absUrl);
                             // data: URL, NOT blob:. On a file:// host the proxied page runs in an
@@ -20223,7 +20422,12 @@ _VIEWER_DL_JS +
                             scr.removeAttribute('crossorigin');
                             scr.setAttribute('src', dataUrl);
                         } catch (e) {
-                            try { scr.setAttribute('src', jsUrl); } catch (_) {}
+                            // Never fall back to the real HTTPS module URL.  That defeats
+                            // the module proxy and is what causes `Failed to fetch dynamically
+                            // imported module` in opaque-origin blob frames.  Leave the script
+                            // without a src and surface a diagnostic instead.
+                            try { scr.removeAttribute('src'); scr.setAttribute('data-gust-module-error', '1'); } catch (_) {}
+                            try { log(`<i class="fas fa-triangle-exclamation" style="color:var(--warn)"></i> module kept inside proxy after fetch failure: ${jsUrl.replace(/^https?:\/\//,'').slice(0,90)}`, 'warn'); } catch (_) {}
                         }
                     }));
                     // Emit ONE import map: real module URL -> its proxied data: URL. Module
@@ -28528,7 +28732,7 @@ _VIEWER_DL_JS +
         </div>
     </div>
 
-<script id="nlgep-games-src">window.NLGEP_GAMES_HTML="<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>NLGEP Games<\/title>\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap\">\n<style>\n:root{--bd:rgba(255,255,255,.16);--tx:#eef5f0;--tx2:#b5c9bd;--ac:#cfe8d8;--ac2:#a9d4bb}\n*{box-sizing:border-box}\nhtml,body{margin:0;min-height:100%}\nbody{font-family:'Space Grotesk','Segoe UI',sans-serif;background:radial-gradient(1200px 700px at 15% -10%,#14442e 0%,transparent 60%),linear-gradient(160deg,#0b2a1c,#04140d) fixed;color:var(--tx);display:flex;min-height:100vh}\n/* alphabet rail (UGS script fills #sidebar) */\n.sidebar{position:fixed;left:0;top:0;width:64px;height:100vh;padding:14px 8px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;background:rgba(255,255,255,.05);backdrop-filter:blur(18px);border-right:1px solid rgba(255,255,255,.12);z-index:10}\n.sidebar::-webkit-scrollbar,body::-webkit-scrollbar{width:6px}\n.sidebar::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:3px}\n.sidebar-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--tx);min-height:38px;padding:8px;font:600 15px 'Space Grotesk',sans-serif;border-radius:10px;cursor:pointer;transition:background .15s}\n.sidebar-btn:hover{background:rgba(255,255,255,.18)}\n.sidebar-btn.empty{opacity:.35;cursor:default}\n.sidebar-btn.empty:hover{background:rgba(255,255,255,.08)}\n.main-content{margin-left:64px;flex:1;padding:22px 18px 40px;min-width:0}\n.top{max-width:760px;margin:0 auto 22px;text-align:center}\n#searchInput{width:100%;max-width:520px;padding:13px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:var(--tx);font:500 15px 'Space Grotesk',sans-serif;outline:none}\n#searchInput::placeholder{color:var(--tx2)}\n#searchInput:focus{border-color:rgba(255,255,255,.4)}\n#lolbutton{display:block;margin:12px auto 0;background:none;border:0;color:var(--tx2);font:500 12px 'Space Grotesk',sans-serif;cursor:pointer;text-decoration:underline}\n.letter-section{max-width:820px;margin:0 auto 32px;min-height:60px}\n.letter-section.empty{opacity:.4}\n.letter-header{font-size:26px;font-weight:700;color:var(--ac);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.18)}\n.buttons-container{display:flex;flex-direction:column;gap:8px;align-items:stretch}\n.empty-message{color:var(--tx2);font-style:italic;text-align:center;padding:14px}\ninput[type=\"button\"]{width:100%;text-align:left;padding:13px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:var(--tx);font:500 15px 'Space Grotesk',sans-serif;cursor:pointer;transition:background .15s,transform .15s}\ninput[type=\"button\"]:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}\n.credit{max-width:760px;margin:30px auto 0;text-align:center;color:var(--tx2);font-size:12px}\n.credit a{color:var(--ac2)}\n@media(max-width:768px){.sidebar{width:52px;padding:10px 5px}.main-content{margin-left:52px;padding:16px 10px}}\n<\/style>\n<\/head>\n<body>\n<div class=\"sidebar\" id=\"sidebar\"><\/div>\n<div class=\"main-content\">\n  <div class=\"top\">\n    <input type=\"text\" placeholder=\"Search games...\" id=\"searchInput\" autocomplete=\"off\">\n    <script src=\"https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/searchbut.js\"><\/script>\n    <button id=\"lolbutton\" onclick=\"const script = document.createElement('script');script.src = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/game.js';document.body.appendChild(script);\">Games not loading? Click to load<\/button>\n  <\/div>\n  <div id=\"sections-container\"><\/div>\n  <div class=\"credit\">Game library from UGS (Ultimate Game Stash).<\/div>\n<\/div>\n<script src=\"https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/games.js\"><\/script>\n<\/body>\n<\/html>\n";</script>
+<script id="nlgep-games-src">window.NLGEP_GAMES_HTML="<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>NLGEP Games<\/title>\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap\">\n<style>\n:root{--bd:rgba(255,255,255,.16);--tx:#eef5f0;--tx2:#b5c9bd;--ac:#cfe8d8;--ac2:#a9d4bb}\n*{box-sizing:border-box}\nhtml,body{margin:0;min-height:100%}\nbody{font-family:'Space Grotesk','Segoe UI',sans-serif;background:radial-gradient(1200px 700px at 15% -10%,#14442e 0%,transparent 60%),linear-gradient(160deg,#0b2a1c,#04140d) fixed;color:var(--tx);display:flex;min-height:100vh}\n/* alphabet rail (UGS script fills #sidebar) */\n.sidebar{position:fixed;left:0;top:0;width:64px;height:100vh;padding:14px 8px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;background:rgba(255,255,255,.05);backdrop-filter:blur(18px);border-right:1px solid rgba(255,255,255,.12);z-index:10}\n.sidebar::-webkit-scrollbar,body::-webkit-scrollbar{width:6px}\n.sidebar::-webkit-scrollbar-thumb,body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:3px}\n.sidebar-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--tx);min-height:38px;padding:8px;font:600 15px 'Space Grotesk',sans-serif;border-radius:10px;cursor:pointer;transition:background .15s}\n.sidebar-btn:hover{background:rgba(255,255,255,.18)}\n.sidebar-btn.empty{opacity:.35;cursor:default}\n.sidebar-btn.empty:hover{background:rgba(255,255,255,.08)}\n.main-content{margin-left:64px;flex:1;padding:22px 18px 40px;min-width:0}\n.top{max-width:760px;margin:0 auto 22px;text-align:center}\n#searchInput{width:100%;max-width:520px;padding:13px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:var(--tx);font:500 15px 'Space Grotesk',sans-serif;outline:none}\n#searchInput::placeholder{color:var(--tx2)}\n#searchInput:focus{border-color:rgba(255,255,255,.4)}\n#lolbutton{display:block;margin:12px auto 0;background:none;border:0;color:var(--tx2);font:500 12px 'Space Grotesk',sans-serif;cursor:pointer;text-decoration:underline}\n.letter-section{max-width:820px;margin:0 auto 32px;min-height:60px}\n.letter-section.empty{opacity:.4}\n.letter-header{font-size:26px;font-weight:700;color:var(--ac);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.18)}\n.buttons-container{display:flex;flex-direction:column;gap:8px;align-items:stretch}\n.empty-message{color:var(--tx2);font-style:italic;text-align:center;padding:14px}\ninput[type=\"button\"]{width:100%;text-align:left;padding:13px 18px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:var(--tx);font:500 15px 'Space Grotesk',sans-serif;cursor:pointer;transition:background .15s,transform .15s}\ninput[type=\"button\"]:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}\n#searchInput{display:none!important}.top{margin-bottom:6px}.credit{max-width:760px;margin:30px auto 0;text-align:center;color:var(--tx2);font-size:12px}\n.credit a{color:var(--ac2)}\n@media(max-width:768px){.sidebar{width:52px;padding:10px 5px}.main-content{margin-left:52px;padding:16px 10px}}\n<\/style>\n<\/head>\n<body>\n<div class=\"sidebar\" id=\"sidebar\"><\/div>\n<div class=\"main-content\">\n  <div class=\"top\">\n    <input type=\"text\" placeholder=\"Search games...\" id=\"searchInput\" autocomplete=\"off\">\n    <script src=\"https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/searchbut.js\"><\/script>\n    <button id=\"lolbutton\" onclick=\"const script = document.createElement('script');script.src = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@latest/game.js';document.body.appendChild(script);\">Games not loading? Click to load<\/button>\n  <\/div>\n  <div id=\"sections-container\"><\/div>\n  <div class=\"credit\">Game library from UGS (Ultimate Game Stash).<\/div>\n<\/div>\n<script src=\"https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/games.js\"><\/script>\n<script>window.addEventListener(\"message\",function(e){if(e.source!==parent)return;var d=e.data||{};var i=document.getElementById(\"searchInput\");if(d.t===\"nlgSearch\"&&i){i.value=String(d.q||\"\");i.dispatchEvent(new Event(\"input\",{bubbles:true}));i.dispatchEvent(new Event(\"keyup\",{bubbles:true}));}if(d.t===\"nlgRandom\"){var b=[].filter.call(document.querySelectorAll(\"#sections-container input[type=button]\"),function(x){return x.offsetParent;});if(b.length)b[Math.floor(Math.random()*b.length)].click();}});<\/script>\n<\/body>\n<\/html>\n";</script>
 <script id="nlgep-layout-js">
 (function(){
   var NL = { mode:'home', tabs:{ai:null,settings:null,browser:null}, gamesLoaded:false };
@@ -28570,18 +28774,17 @@ _VIEWER_DL_JS +
   }
 
   /* home page */
-  var nlgepAnimTimer = null;
-  function playNlgepMainAnimation(){
-    var overlay = $('nlgepMainAnimation');
-    if (!overlay) return;
-    clearTimeout(nlgepAnimTimer);
-    overlay.classList.remove('active');
-    void overlay.offsetWidth;
-    overlay.classList.add('active');
-    nlgepAnimTimer = setTimeout(function(){ overlay.classList.remove('active'); }, 1250);
-  }
+  function playNlgepBrandAnimation(){
+  var root = $('nlHomeTitleCard');
+  if (!root) return;
+  root.querySelectorAll('.gust-icon-anim,.gust-letter-N,.gust-letter-L,.gust-letter-G,.gust-letter-E,.gust-letter-P,.gust-badge-anim').forEach(function(el){
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+}
 
-  function renderHome(){
+function renderHome(){
     var now = new Date(), h = now.getHours(), mm = String(now.getMinutes()).padStart(2,'0'), t;
     var use24 = false; try{ use24 = localStorage.getItem('gust:24hrclock:v1')==='true'; }catch(e){}
     t = use24 ? String(h).padStart(2,'0')+':'+mm : ((h%12||12)+':'+mm+' '+(h<12?'AM':'PM'));
@@ -28621,7 +28824,7 @@ _VIEWER_DL_JS +
     document.querySelectorAll('.nl-page').forEach(function(p){ p.classList.remove('active'); });
     var p = $('nlPage-'+page);
     if (p) p.classList.add('active');
-    if (page==='home'){ renderHome(); renderFavs(); playNlgepMainAnimation(); }
+    if (page==='home'){ renderHome(); renderFavs(); playNlgepBrandAnimation(); }
     else if (page==='games'){ loadGames(); }
     else if (page==='browser'){
       setBrand('browser');
@@ -28644,6 +28847,84 @@ _VIEWER_DL_JS +
   if (flipEl){ flipEl.addEventListener('click', function(){ flipEl.classList.toggle('flipped'); startFlip(); }); startFlip(); }
   window.NLGEP = NL;
   NL.show('home');
+})();
+</script>
+<script id="nlgep-anime-js">
+(function(){
+  var API='https://api.jikan.moe/v4', $=function(i){return document.getElementById(i);};
+  var st={q:'',page:1,more:false,busy:false}, cache={}, lastCall=0;
+  function esc(s){var d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
+  function safeUrl(u){try{var x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:'#';}catch(e){return '#';}}
+  // Jikan allows ~3 requests/second; space calls out and cache results.
+  async function jget(path){
+    if(cache[path]) return cache[path];
+    var wait=Math.max(0,400-(Date.now()-lastCall)); if(wait) await new Promise(function(r){setTimeout(r,wait);});
+    lastCall=Date.now();
+    var r=await fetch(API+path,{headers:{Accept:'application/json'}});
+    if(r.status===429){await new Promise(function(r){setTimeout(r,1200);}); r=await fetch(API+path);}
+    if(!r.ok) throw new Error('Anime service returned '+r.status);
+    var j=await r.json(); cache[path]=j; return j;
+  }
+  function card(a){
+    var el=document.createElement('div'); el.className='nl-an-item'; el.tabIndex=0; el.setAttribute('role','button');
+    var img=(a.images&&a.images.jpg&&a.images.jpg.image_url)||'';
+    var title=a.title_english||a.title;
+    el.innerHTML='<div class="nl-an-poster">'+(img?'<img loading="lazy" alt="" src="'+esc(safeUrl(img))+'">':'')+'</div><div class="nl-an-meta"><b>'+esc(title)+'</b><span>'+esc(a.type||'')+(a.year?' · '+a.year:'')+(a.score?' · ★ '+a.score:'')+'</span></div>';
+    var open=function(){showDetail(a);};
+    el.addEventListener('click',open); el.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+    return el;
+  }
+  async function load(reset){
+    if(st.busy) return; st.busy=true;
+    var grid=$('nlAnGrid'), status=$('nlAnStatus'), type=$('nlAnGenre').value;
+    if(reset){grid.innerHTML=''; st.page=1; $('nlAnDetail').style.display='none';}
+    status.className='nl-yt-status'; status.textContent='Loading…';
+    try{
+      var path = st.q ? '/anime?q='+encodeURIComponent(st.q)+'&sfw=true&limit=24&page='+st.page+(type?'&type='+type:'')
+                      : '/seasons/now?sfw=true&limit=24&page='+st.page+(type?'&filter='+type:'');
+      var j=await jget(path), list=j.data||[];
+      list.forEach(function(a){grid.appendChild(card(a));});
+      st.more=!!(j.pagination&&j.pagination.has_next_page);
+      status.textContent=grid.children.length?(st.q?'Results for "'+st.q+'"':'Airing now'):'No results found.';
+    }catch(e){status.className='nl-yt-status err'; status.textContent=(navigator.onLine?e.message:'You appear to be offline.')+' — try again in a moment.';}
+    $('nlAnMore').style.display=st.more?'inline-block':'none'; st.busy=false;
+  }
+  async function showDetail(a){
+    var box=$('nlAnDetail'), title=a.title_english||a.title, img=(a.images&&a.images.jpg&&(a.images.jpg.large_image_url||a.images.jpg.image_url))||'';
+    var chips=[a.type,a.episodes?a.episodes+' eps':null,a.status,a.rating].concat((a.genres||[]).map(function(g){return g.name;})).filter(Boolean);
+    box.style.display='block';
+    box.innerHTML='<div class="nl-an-detail">'+(img?'<img alt="" src="'+esc(safeUrl(img))+'">':'')+'<div class="nl-an-info"><h2>'+esc(title)+'</h2><div class="nl-an-chips">'+chips.map(function(c){return '<span>'+esc(c)+'</span>';}).join('')+'</div><p style="color:var(--tx2);font-size:14px;line-height:1.5">'+esc((a.synopsis||'No synopsis available.').slice(0,900))+'</p><div class="nl-an-links" id="nlAnLinks"><span style="color:var(--tx2);font-size:13px">Finding where to watch…</span></div></div></div>';
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+    var links=[];
+    if(a.trailer&&a.trailer.url) links.push(['<i class="fas fa-play"></i> Trailer',a.trailer.url]);
+    try{ var s=await jget('/anime/'+a.mal_id+'/streaming'); (s.data||[]).forEach(function(x){links.push([esc(x.name),x.url]);}); }catch(e){}
+    links.push(['MyAnimeList',a.url]);
+    var out=$('nlAnLinks'); if(!out) return;
+    out.innerHTML=links.filter(function(l){return l[1];}).map(function(l){return '<a href="'+esc(safeUrl(l[1]))+'" target="_blank" rel="noopener noreferrer">'+l[0]+'</a>';}).join('');
+  }
+  $('nlAnForm').addEventListener('submit',function(e){e.preventDefault(); st.q=$('nlAnQ').value.trim(); load(true);});
+  $('nlAnGenre').addEventListener('change',function(){load(true);});
+  $('nlAnMore').addEventListener('click',function(){st.page++; load(false);});
+  var first=true, nav=document.querySelector('.nl-nav[data-nl="anime"]');
+  if(nav) nav.addEventListener('click',function(){ if(first){first=false; load(true);} });
+})();
+</script>
+<script id="nlgep-games-bar-js">
+(function(){
+  var $=function(i){return document.getElementById(i);}, q=$('nlGmQ'), frame=$('nlGamesFrame');
+  if(!q||!frame) return;
+  function send(m){ try{ frame.contentWindow.postMessage(m,'*'); }catch(e){} }
+  function push(){ $('nlGmClear').style.display=q.value?'block':'none'; send({t:'nlgSearch',q:q.value}); }
+  q.addEventListener('input',push);
+  $('nlGmForm').addEventListener('submit',function(e){e.preventDefault();push();});
+  $('nlGmClear').addEventListener('click',function(){q.value='';push();q.focus();});
+  $('nlGmRandom').addEventListener('click',function(){send({t:'nlgRandom'});});
+  $('nlGmHome').addEventListener('click',function(){ if(window.NLGEP) window.NLGEP.show('home'); });
+  $('nlGmReload').addEventListener('click',function(){ q.value=''; $('nlGmClear').style.display='none'; frame.srcdoc=window.NLGEP_GAMES_HTML; });
+  frame.addEventListener('load',function(){ if(q.value) setTimeout(push,300); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='/' && document.body.getAttribute('data-nl')==='games' && !/INPUT|TEXTAREA/.test((document.activeElement||{}).tagName||'')){ e.preventDefault(); q.focus(); }
+  });
 })();
 </script>
 <script id="nlgep-yt-js">
@@ -28828,6 +29109,8 @@ _VIEWER_DL_JS +
 </script>
 
 
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","spa":2}' crossorigin="anonymous"></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4bc70e2c01a94c73b74392e4234840661791215815920" integrity="sha512-L0ha0OXavK/8okipN9F8BtP84dg9DUhPERbBXzwI6dgTA55d2+yweo3pn5CSFYs45/r8md2+xvUPtTdvTNRfjA==" data-cf-beacon='{"version":"2024.11.0","token":"b2074e7888b746fe9fbbc15492b4c3d4","spa":2}' crossorigin="anonymous"></script>
 </body>
 
 </html>
